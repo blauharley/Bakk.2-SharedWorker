@@ -1,0 +1,45 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Unbenanntes Dokument</title>
+<script>
+window.onload = function(){
+ // a shared-webworker is created and a reference of the shared-webworker is returned
+  var sw = new SharedWorker("shared_script.js");  
+  sw.port.addEventListener('message',function(e){
+    // outputs all messages that have been sent from first and second script
+    console.log(e.data);
+  },false);
+  sw.port.start();
+  
+  var sendMessage = function(){
+    sw.port.postMessage("Sent from first script at" + new Date().getTime() );
+    setTimeout(sendMessage, 30);
+  };
+  sendMessage();
+};
+</script>
+
+</head>
+
+<body>
+</body>
+<script>
+  // only a reference of the shared-webworker is returned
+  var sw2 = new SharedWorker("shared_script.js");
+  sw2.port.onmessage = function(e){
+    // outputs all messages that have been sent from first and second script
+    console.log(e.data);
+  };
+  //sw2.port.start(); 
+  
+  var sendMessage = function(){
+    sw2.port.postMessage("Sent from second script at" + new Date().getTime() );
+    setTimeout(sendMessage, 30);
+  };
+  sendMessage();
+
+</script>
+
+</html>
